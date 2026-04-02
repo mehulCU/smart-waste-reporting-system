@@ -57,7 +57,7 @@ def index():
         conn.close()
 
         # 📱 WhatsApp Message
-        phone = "9983120054"   # 🔴 replace with your number
+        phone = "919983120054"   # 🔴 replace with your number
 
         maps_link = f"https://www.google.com/maps?q={lat},{lng}"
 
