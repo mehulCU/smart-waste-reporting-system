@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+
+<style>
+body {
+  font-family: 'Segoe UI';
+  background: #f4f4f4;
+  padding: 20px;
+}
+#map { height: 400px; margin-bottom: 20px; border-radius: 10px; }
+.card {
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>🧑‍💻 Admin Dashboard</h1>
+
+<p>Total Reports: {{ reports|length }}</p>
+
+<div id="map"></div>
+
+{% for r in reports %}
+<div class="card">
+  <p>📍 {{ r[1] }}</p>
+  <p>Status: {{ r[4] }}</p>
+
+  {% if r[4] == "pending" %}
+    <a href="/update/{{ r[0] }}">Mark Cleaned</a>
+  {% endif %}
+</div>
+{% endfor %}
+
+<a href="/">⬅ Back</a>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+var map = L.map('map').setView([28.6, 77.2], 10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+var reports = {{ reports|tojson }};
+reports = reports.map(r => ({
+    id: r[0],
+    location: r[1],
+    lat: r[2],
+    lng: r[3],
+    status: r[4]
+}));
+
+var heatPoints = reports.map(r => [r.lat, r.lng, 0.5]);
+L.heatLayer(heatPoints).addTo(map);
+
+reports.forEach(r => {
+    L.marker([r.lat, r.lng])
+      .addTo(map)
+      .bindPopup("📍 " + r.location + "<br>Status: " + r.status);
+});
+</script>
+
+</body>
+</html>

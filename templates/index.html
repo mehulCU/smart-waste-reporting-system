@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Waste System</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* HERO SECTION */
+.hero {
+  text-align: center;
+  color: white;
+  padding: 40px 20px;
+}
+
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 16px;
+  opacity: 0.9;
+}
+
+/* CARD */
+.container {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 15px;
+  max-width: 500px;
+  margin: auto;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+}
+
+#map {
+  height: 300px;
+  margin-top: 10px;
+  border-radius: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #5a67d8;
+}
+
+.admin-btn {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: #333;
+  text-decoration: none;
+  font-weight: bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- 🔥 HERO -->
+<div class="hero">
+  <h1>🌍 Smart Waste Reporting</h1>
+  <p>Report waste, improve sanitation & build a cleaner future</p>
+</div>
+
+<!-- 📦 FORM CARD -->
+<div class="container">
+
+<h2>📍 Report Waste</h2>
+
+<form method="POST">
+<input type="text" name="location" placeholder="Enter Area" required>
+
+<input type="hidden" name="lat" id="lat">
+<input type="hidden" name="lng" id="lng">
+
+<button type="submit">🚀 Submit Report</button>
+</form>
+
+<div id="map"></div>
+
+<a href="/admin" class="admin-btn">🧑‍💻 Go to Admin Dashboard</a>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+var map = L.map('map').setView([28.6, 77.2], 10);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+var marker;
+
+// Auto location
+navigator.geolocation.getCurrentPosition(function(pos) {
+    var lat = pos.coords.latitude;
+    var lng = pos.coords.longitude;
+
+    map.setView([lat, lng], 13);
+
+    marker = L.marker([lat, lng]).addTo(map);
+
+    document.getElementById("lat").value = lat;
+    document.getElementById("lng").value = lng;
+});
+
+// Click to select
+map.on('click', function(e) {
+    if (marker) map.removeLayer(marker);
+
+    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
+
+    document.getElementById("lat").value = e.latlng.lat;
+    document.getElementById("lng").value = e.latlng.lng;
+});
+</script>
+
+<style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+    
+    /* 🔥 ANIMATIONS */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* HERO */
+    .hero {
+      text-align: center;
+      color: white;
+      padding: 40px 20px;
+      animation: fadeIn 1s ease;
+    }
+    
+    /* CARD */
+    .container {
+      background: rgba(255,255,255,0.95);
+      padding: 25px;
+      border-radius: 15px;
+      max-width: 500px;
+      margin: auto;
+      box-shadow: 0px 10px 30px rgba(0,0,0,0.2);
+      animation: slideUp 1s ease;
+    }
+    
+    /* MAP */
+    #map {
+      height: 300px;
+      margin-top: 10px;
+      border-radius: 10px;
+      animation: fadeIn 1.5s ease;
+    }
+    
+    /* INPUT */
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: 0.3s;
+    }
+    
+    input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 8px rgba(102,126,234,0.5);
+    }
+    
+    /* BUTTON */
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    /* 🔥 Hover Animation */
+    button:hover {
+      transform: scale(1.05);
+      background: #5a67d8;
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    /* ADMIN LINK */
+    .admin-btn {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #333;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    
+    .admin-btn:hover {
+      color: #667eea;
+      transform: scale(1.05);
+    }
+    </style>
+    <script>
+        // Smooth scroll effect on load
+        window.onload = () => {
+          document.body.style.opacity = 0;
+          setTimeout(() => {
+            document.body.style.transition = "opacity 1s";
+            document.body.style.opacity = 1;
+          }, 100);
+        };
+        </script>
+
+</body>
+</html>
