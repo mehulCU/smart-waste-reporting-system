@@ -239,14 +239,79 @@ map.on('click', function(e) {
     }
     </style>
     <script>
-        // Smooth scroll effect on load
-        window.onload = () => {
-          document.body.style.opacity = 0;
-          setTimeout(() => {
-            document.body.style.transition = "opacity 1s";
-            document.body.style.opacity = 1;
-          }, 100);
-        };
+        var map = L.map('map').setView([28.6, 77.2], 10);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        var userMarker;
+        var selectedMarker;
+        
+        // 📍 Custom icons
+        var userIcon = L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+            iconSize: [32, 32]
+        });
+        
+        var selectIcon = L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            iconSize: [32, 32]
+        });
+        
+        // 🚀 Get Current Location
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                var lat = pos.coords.latitude;
+                var lng = pos.coords.longitude;
+        
+                map.setView([lat, lng], 15);
+        
+                // Blue marker = current location
+                userMarker = L.marker([lat, lng], {icon: userIcon})
+                    .addTo(map)
+                    .bindPopup("📍 You are here")
+                    .openPopup();
+        
+                // Default selected = current location
+                selectedMarker = L.marker([lat, lng], {icon: selectIcon})
+                    .addTo(map);
+        
+                document.getElementById("lat").value = lat;
+                document.getElementById("lng").value = lng;
+        
+                // 🔥 Auto location name (reverse geocoding)
+                fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+                .then(res => res.json())
+                .then(data => {
+                    document.querySelector("input[name='location']").value =
+                        data.display_name || "Current Location";
+                });
+        
+            },
+            function(error) {
+                alert("⚠️ Location access denied. Please allow location.");
+            }
+        );
+        
+        // 🖱️ Click to change location
+        map.on('click', function(e) {
+            if (selectedMarker) {
+                map.removeLayer(selectedMarker);
+            }
+        
+            selectedMarker = L.marker([e.latlng.lat, e.latlng.lng], {icon: selectIcon})
+                .addTo(map);
+        
+            document.getElementById("lat").value = e.latlng.lat;
+            document.getElementById("lng").value = e.latlng.lng;
+        
+            // 🔥 Get location name from click
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${e.latlng.lat}&lon=${e.latlng.lng}&format=json`)
+            .then(res => res.json())
+            .then(data => {
+                document.querySelector("input[name='location']").value =
+                    data.display_name || "Selected Location";
+            });
+        });
         </script>
 
 </body>
