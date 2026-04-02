@@ -70,10 +70,9 @@ def index():
         message = urllib.parse.quote(msg)
 
         url = f"https://wa.me/{phone}?text={message}"
+        return redirect(url)
 
-        webbrowser.open(url)
-
-        return redirect("/")
+        
 
     return render_template("index.html")
 
